@@ -146,7 +146,7 @@ function buildTemplate(attrs = {}) {
         <slot name="suffix"></slot>
       </div>
 
-      <div class="children-container" id="children" part="children">
+      <div class="children-container" id="children" part="children" role="group" aria-label="Children of the tree item">
         <slot name="children"></slot>
       </div>
     </div>
@@ -167,6 +167,7 @@ class NocTreeItem extends HTMLElement {
   }
 
   connectedCallback() {
+    this.setAttribute('role', 'treeitem');
     if (!this._isRendered) {
       this._setup();
       this._isRendered = true;
@@ -236,6 +237,19 @@ class NocTreeItem extends HTMLElement {
     this._loadingUi.hidden = !this.loading;
     
     this._toggle.classList.toggle('hidden', this._isLeaf);
+    
+    // ARIA: treeitem must expose aria-expanded when it can expand/collapse
+    if (this._isLeaf || this.lazy) {
+      this.removeAttribute('aria-expanded');
+    } else {
+      this.setAttribute('aria-expanded', this.expanded ? 'true' : 'false');
+    }
+    this.setAttribute('aria-selected', this.selected ? 'true' : 'false');
+    if (this.disabled) {
+      this.setAttribute('aria-disabled', 'true');
+    } else {
+      this.removeAttribute('aria-disabled');
+    }
     
     const hasCollapseIcon = this.hasAttribute('has-collapse-icon');
     if (hasCollapseIcon) {
