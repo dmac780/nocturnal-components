@@ -395,7 +395,7 @@ class NocDataGrid extends HTMLElement {
       const pages = [];
 
       const addPage = p => pages.push(
-        `<button class="pg-btn${p === this._page ? ' pg-active' : ''}" data-page="${p}">${p}</button>`
+        `<button class="pg-btn${p === this._page ? ' pg-active' : ''}" data-page="${p}" aria-label="Go to page ${p}">${p}</button>`
       );
 
       if (totalPages <= 7) {
@@ -414,11 +414,11 @@ class NocDataGrid extends HTMLElement {
         <div class="pagination" part="pagination">
           <span class="pg-info">${start}–${end} of ${total}</span>
           <div class="pg-controls">
-            <button class="pg-btn pg-arrow" data-page="${this._page - 1}" ${this._page === 1 ? 'disabled' : ''}>
+            <button class="pg-btn pg-arrow" data-page="${this._page - 1}" ${this._page === 1 ? 'disabled' : ''} aria-label="Previous page">
               <svg viewBox="0 0 16 16"><path d="M10 3 L5 8 L10 13" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             ${pages.join('')}
-            <button class="pg-btn pg-arrow" data-page="${this._page + 1}" ${this._page === totalPages ? 'disabled' : ''}>
+            <button class="pg-btn pg-arrow" data-page="${this._page + 1}" ${this._page === totalPages ? 'disabled' : ''} aria-label="Next page">
               <svg viewBox="0 0 16 16"><path d="M6 3 L11 8 L6 13" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
           </div>
