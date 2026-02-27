@@ -49,14 +49,23 @@ class NocQrCode extends HTMLElement {
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    // Only attach shadow root if it doesn't exist (SSR may have created one via DSD)
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: 'open' });
+    }
     this._canvas = document.createElement('canvas');
     this._isRendered = false;
   }
 
   connectedCallback() {
     if (!this._isRendered) {
-      this._setupBase();
+      // Check if SSR canvas already exists
+      const existingCanvas = this.shadowRoot.querySelector('canvas');
+      if (existingCanvas) {
+        this._canvas = existingCanvas;
+      } else {
+        this._setupBase();
+      }
       this._isRendered = true;
     }
     this._render();
