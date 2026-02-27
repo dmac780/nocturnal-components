@@ -64,8 +64,8 @@ function buildTemplate(attrs = {}) {
       }
     </style>
 
-    <div class="radio">
-      <div class="dot"></div>
+    <div class="radio" aria-hidden="true">
+      <div class="dot" role="presentation" aria-hidden="true"></div>
     </div>
     <slot></slot>
   `;
@@ -87,6 +87,7 @@ class NocRadio extends HTMLElement {
 
   connectedCallback() {
     this.setAttribute('role', 'radio')
+    this.setAttribute('aria-checked', this.checked ? 'true' : 'false')
     this.tabIndex = this.disabled ? -1 : 0
 
     if (this.checked) {
@@ -97,7 +98,10 @@ class NocRadio extends HTMLElement {
     this.addEventListener('keydown', this._onKeydown)
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback(name) {
+    if (name === 'checked') {
+      this.setAttribute('aria-checked', this.checked ? 'true' : 'false')
+    }
     this.tabIndex = this.disabled ? -1 : 0
   }
 

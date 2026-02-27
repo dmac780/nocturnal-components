@@ -160,6 +160,9 @@ function buildTemplate(attrs = {}) {
 
     <div id="divider" part="divider" role="separator" tabindex="0"
       aria-label="Resize panels"
+      aria-valuenow="50"
+      aria-valuemin="0"
+      aria-valuemax="100"
       aria-orientation="${vertical ? 'horizontal' : 'vertical'}">
       <div class="handle">
         <div class="dots">
@@ -256,6 +259,15 @@ class NocSplitPanel extends HTMLElement {
     const value    = this._isPositionPercent
       ? `${this._position}%`
       : `${this._position}px`;
+
+    // Update ARIA value for screen readers
+    const divider = this.shadowRoot.getElementById('divider');
+    if (divider) {
+      const ariaValue = this._isPositionPercent 
+        ? Math.round(this._position) 
+        : Math.round((this._position / (vertical ? this.offsetHeight : this.offsetWidth)) * 100);
+      divider.setAttribute('aria-valuenow', String(ariaValue));
+    }
 
     this._startPanel.style.removeProperty('width');
     this._startPanel.style.removeProperty('height');

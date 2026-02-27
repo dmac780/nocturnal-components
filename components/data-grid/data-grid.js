@@ -376,7 +376,7 @@ class NocDataGrid extends HTMLElement {
           ${selectable
             ? `<td class="td td-check">
                  <label class="check-wrap">
-                   <input type="checkbox" class="cb" data-row-idx="${origIdx}" ${isSelected ? 'checked' : ''} />
+                   <input type="checkbox" class="cb" data-row-idx="${origIdx}" ${isSelected ? 'checked' : ''} aria-label="Select row ${origIdx + 1}"/>
                    <span class="cb-box"></span>
                  </label>
                </td>`
@@ -428,7 +428,7 @@ class NocDataGrid extends HTMLElement {
     const selectAllCell = selectable
       ? `<th class="th th-check">
            <label class="check-wrap">
-             <input type="checkbox" class="cb" data-select-all />
+             <input type="checkbox" class="cb" data-select-all aria-label="Select all rows"/>
              <span class="cb-box"></span>
            </label>
          </th>`
@@ -441,11 +441,11 @@ class NocDataGrid extends HTMLElement {
           font-family: inherit;
           font-size: inherit;
 
-          --noc-grid-bg:               #1a1a1a;
+          --noc-grid-bg:             #1a1a1a;
           --noc-grid-border:           #222;
           --noc-grid-radius:           1rem;
           --noc-grid-header-bg:        #111;
-          --noc-grid-header-color:     #555;
+          --noc-grid-header-color:     #ccc;
           --noc-grid-header-size:      0.6875rem;
           --noc-grid-row-bg:           transparent;
           --noc-grid-row-hover:        rgba(255, 255, 255, 0.03);
@@ -456,7 +456,7 @@ class NocDataGrid extends HTMLElement {
           --noc-grid-cell-padding:     0.625rem 1rem;
           --noc-grid-accent:           #2563eb;
           --noc-grid-divider:          #1e1e1e;
-          --noc-grid-pagination-color: #555;
+          --noc-grid-pagination-color: #ccc;
           --noc-grid-scrollbar-color:  #2a2a2a;
         }
 
