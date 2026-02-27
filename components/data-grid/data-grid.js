@@ -67,7 +67,10 @@ class NocDataGrid extends HTMLElement {
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    // Only attach shadow root if it doesn't exist (SSR may have created one via DSD)
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: 'open' });
+    }
 
     this._columns     = [];
     this._rows        = [];

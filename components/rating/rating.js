@@ -135,7 +135,10 @@ class NocRating extends HTMLElement {
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    // Only attach shadow root if it doesn't exist (SSR may have created one via DSD)
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: 'open' });
+    }
     this._internals  = this.attachInternals();
     this._hoverValue = null;
     this._isRendered = false;
@@ -166,11 +169,16 @@ class NocRating extends HTMLElement {
   }
 
   _setup() {
-    this.shadowRoot.innerHTML = buildTemplate({
-      max:   this.getAttribute('max'),
-      value: this.getAttribute('value'),
-      label: this.getAttribute('label'),
-    });
+    // Check if SSR content already exists
+    const hasSSRContent = this.shadowRoot.querySelector('.stars-container');
+    
+    if (!hasSSRContent) {
+      this.shadowRoot.innerHTML = buildTemplate({
+        max:   this.getAttribute('max'),
+        value: this.getAttribute('value'),
+        label: this.getAttribute('label'),
+      });
+    }
 
     this._container      = this.shadowRoot.getElementById('container');
     this._labelContainer = this.shadowRoot.querySelector('.label');
