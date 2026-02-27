@@ -1,6 +1,6 @@
 {
   "name": "nocturnal-components",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "nocturnal shadow-DOM web components library",
   "type": "module",
   "license": "MIT"
