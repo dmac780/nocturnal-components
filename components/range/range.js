@@ -187,16 +187,23 @@ function buildTemplate(attrs = {}) {
 
       noc-tooltip {
         position: absolute;
-        top: -20px;
         pointer-events: none;
         transform: translateX(-50%);
         --noc-tooltip-bg: #222;
         --noc-tooltip-radius: 6px;
       }
+
+      noc-tooltip[placement="top"] {
+        bottom: calc(100% + 8px);
+      }
+
+      noc-tooltip[placement="bottom"] {
+        top: calc(100% + 8px);
+      }
     </style>
 
     <div class="container">
-      ${label ? `<span class="label">${label}</span>` : ''}
+      ${label ? `<label class="label" for="range-input">${label}</label>` : ''}
 
       <div class="slider-wrapper">
         <div class="progress-fill"></div>
@@ -208,6 +215,7 @@ function buildTemplate(attrs = {}) {
         ` : ''}
 
         <input
+          id="range-input"
           type="range"
           min="${min}"
           max="${max}"

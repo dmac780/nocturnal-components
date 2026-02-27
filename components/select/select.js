@@ -223,10 +223,16 @@ function buildTemplate(attrs = {}) {
       .dropdown::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
     </style>
 
-    <div id="label-container">${label ? `<label class="label">${label}</label>` : ''}</div>
+    <div id="label-container">${label ? `<label class="label" id="select-label">${label}</label>` : ''}</div>
 
     <div class="select-container">
-      <div class="control ${size} ${disabled ? 'disabled' : ''} ${filled ? 'filled' : ''} ${pill ? 'pill' : ''}" id="trigger" role="combobox" aria-haspopup="listbox">
+      <div class="control ${size} ${disabled ? 'disabled' : ''} ${filled ? 'filled' : ''} ${pill ? 'pill' : ''}" 
+           id="trigger" 
+           role="combobox" 
+           aria-haspopup="listbox"
+           aria-expanded="false"
+           aria-controls="dropdown"
+           ${label ? 'aria-labelledby="select-label"' : `aria-label="${placeholder || 'Select an option'}"`}>
         <slot name="prefix"></slot>
         <div class="display"><span class="placeholder">${placeholder}</span></div>
         <slot name="suffix"></slot>

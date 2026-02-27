@@ -106,7 +106,7 @@ function buildTemplate(attrs = {}) {
     </style>
 
     <div class="field" part="base">
-      ${label ? `<label id="label" part="label">${label}</label>` : '<label id="label" part="label" style="display:none"></label>'}
+      ${label ? `<label id="label" for="textarea" part="label">${label}</label>` : '<label id="label" for="textarea" part="label" style="display:none"></label>'}
       <textarea id="textarea" part="textarea"
         rows="${rows}"
         placeholder="${placeholder}"

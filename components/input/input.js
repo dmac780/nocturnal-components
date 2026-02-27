@@ -165,10 +165,11 @@ function buildTemplate(attrs = {}) {
     </style>
 
     <div class="input-group">
-      ${label ? `<label class="label">${label}</label>` : ''}
+      ${label ? `<label class="label" for="input">` + label + `</label>` : ''}
       <div class="input-wrapper ${disabled ? 'disabled' : ''}">
         <slot name="prefix"></slot>
         <input 
+          id="input"
           type="${type}" 
           placeholder="${placeholder}" 
           value="${value}" 
