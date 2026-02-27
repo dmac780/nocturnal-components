@@ -331,7 +331,10 @@ class NocFileInput extends HTMLElement {
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    // Only attach shadow root if it doesn't exist (SSR may have created one via DSD)
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: 'open' });
+    }
     this._files = [];
     this._isDragging = false;
     this._validationMessage = '';
@@ -364,8 +367,30 @@ class NocFileInput extends HTMLElement {
   }
 
   connectedCallback() {
-    this.render();
-    this._setupEventListeners();
+    console.log('[noc-file-input] connectedCallback START', {
+      innerHTML: this.innerHTML,
+      childElementCount: this.childElementCount,
+      firstChild: this.firstChild?.nodeName,
+      hasTemplate: !!this.querySelector('template'),
+      shadowRootMode: this.shadowRoot?.mode,
+      shadowRootChildren: this.shadowRoot?.childElementCount,
+      shadowRootHTML: this.shadowRoot?.innerHTML?.substring(0, 200)
+    });
+    
+    // Check if shadow DOM already has content from DSD
+    const hasDropzone = this.shadowRoot?.querySelector('.dropzone');
+    
+    if (hasDropzone) {
+      // SSR hydration - shadow DOM already populated
+      console.log('[noc-file-input] SSR hydration path - attaching listeners only');
+      this._inputEl = this.shadowRoot.querySelector('input[type="file"]');
+      this._setupEventListeners();
+    } else {
+      // Client render - need to populate shadow DOM
+      console.log('[noc-file-input] Client render path - calling render()');
+      this.render();
+      this._setupEventListeners();
+    }
   }
 
   disconnectedCallback() {
