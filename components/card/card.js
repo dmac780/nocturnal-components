@@ -13,10 +13,12 @@
  * @attr {boolean} glass   - Enables glassmorphism variant
  * @attr {boolean} no-hover - When set, disables hover lift (use when card contains fixed-position overlays e.g. chart tooltips)
  * @attr {boolean} overflow-visible - When set, card uses overflow:visible so inner overlays (e.g. chart tooltips) are not clipped
+ * @attr {boolean} full-height - When set, inner card fills host height (e.g. for equal-height cards in a grid)
  *
  * CSS Custom Properties:
  * @cssprop --noc-card-bg          - Background color (default: #1a1a1a)
  * @cssprop --noc-card-color       - Body text color (default: #bbb)
+ * @cssprop --noc-card-header-color - Header/title color (default: #eee)
  * @cssprop --noc-card-border      - Border color (default: #333)
  * @cssprop --noc-card-radius      - Border radius (default: 1rem)
  * @cssprop --noc-card-padding     - Inner padding shorthand (default: 1.5rem)
@@ -56,6 +58,10 @@ function buildTemplate(attrs = {}) {
 
       :host([overflow-visible]) .card {
         overflow: visible;
+      }
+
+      :host([full-height]) .card {
+        min-height: 100%;
       }
 
       :host(:not([no-hover]):hover) .card {
@@ -113,7 +119,7 @@ function buildTemplate(attrs = {}) {
         padding: var(--noc-card-padding, 1.5rem) var(--noc-card-padding, 1.5rem) 0.5rem;
         font-size: 1.25rem;
         font-weight: 600;
-        color: #fff;
+        color: var(--noc-card-header-color, #eee);
       }
 
       .card:not(.has-image) .header { padding-top: var(--noc-card-padding, 1.5rem); }

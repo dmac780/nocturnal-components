@@ -33,6 +33,9 @@
  * @attr {'horizontal'|'vertical'} legend-layout
  *   Controls the legend direction. Defaults to 'vertical'.
  *
+ * @attr {boolean} full-width
+ *   When set, chart fills container and shrinks with it (responsive).
+ *
  * CSS Custom Properties:
  * @cssprop --noc-pie-size          - Diameter of the chart (default: 180px)
  * @cssprop --noc-pie-bg            - Card background (default: #1a1a1a)
@@ -100,6 +103,17 @@ function buildTemplate(attrs = {}, slices = [], total = 0, isDonut = false, noBg
         width: var(--noc-pie-size);
         height: var(--noc-pie-size);
         align-self: center;
+      }
+
+      :host([full-width]) {
+        display: block;
+        width: 100%;
+        min-width: 0;
+      }
+      :host([full-width]) .wrap {
+        width: 100%;
+        max-width: var(--noc-pie-size);
+        aspect-ratio: 1 / 1;
       }
 
       svg {
@@ -404,7 +418,7 @@ class NocPieChart extends HTMLElement {
       const rect = this.getBoundingClientRect();
       let x = e.clientX - rect.left + 14;
       let y = e.clientY - rect.top + 14;
-      if (x + 200 > rect.width)  { x = e.clientX - rect.left - 14 - 200; }
+      if (x + 200 > rect.width)  { x = e.clientX - rect.left - 14 - 100; }
       if (y + 48  > rect.height) { y = e.clientY - rect.top - 14 - 48; }
       tooltip.style.left = `${x}px`;
       tooltip.style.top  = `${y}px`;

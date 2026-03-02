@@ -19,6 +19,7 @@
  * @attr {boolean} filled         - Force-fill single-series shape.
  * @attr {'horizontal'|'vertical'} legend-layout - Legend flex direction. Defaults to 'horizontal'.
  * @attr {boolean} lockable       - Click to lock/highlight a series.
+ * @attr {boolean} full-width     - When set, chart fills container and shrinks with it (responsive).
  *
  * CSS Custom Properties:
  * @cssprop --noc-radar-size         - SVG canvas size (default: 220px)
@@ -95,6 +96,17 @@ function buildTemplate(attrs = {}, noBg = false, title = '', rings = '', spokes 
         align-self: center;
       }
 
+      :host([full-width]) {
+        display: block;
+        width: 100%;
+        min-width: 0;
+      }
+      :host([full-width]) .wrap {
+        width: 100%;
+        max-width: var(--noc-radar-size);
+        aspect-ratio: 1 / 1;
+      }
+
       svg {
         width: 100%;
         height: 100%;
@@ -151,7 +163,7 @@ function buildTemplate(attrs = {}, noBg = false, title = '', rings = '', spokes 
       :host([lockable]) .legend-row.legend-locked  { opacity: 1 !important; }
 
       .tooltip {
-        position: fixed;
+        position: absolute;
         background: var(--noc-radar-tooltip-bg);
         color: var(--noc-radar-tooltip-fg);
         font-family: inherit;
@@ -505,10 +517,12 @@ class NocRadarChart extends HTMLElement {
       .getPropertyValue('--noc-radar-stroke').trim() || '#2563eb';
 
     const posTooltip = (e) => {
-      let x = e.clientX + 14;
-      let y = e.clientY + 14;
-      if (x + 200 > window.innerWidth)  { x = e.clientX - 14 - 200; }
-      if (y + 44  > window.innerHeight) { y = e.clientY - 14 - 44; }
+      const rect = this.getBoundingClientRect();
+      const offset = 10;
+      let x = e.clientX - rect.left + offset;
+      let y = e.clientY - rect.top + offset;
+      if (x + 200 > rect.width)  { x = e.clientX - rect.left - offset - 100; }
+      if (y + 44  > rect.height) { y = e.clientY - rect.top - offset - 44; }
       tooltip.style.left = `${x}px`;
       tooltip.style.top  = `${y}px`;
     };
