@@ -35,12 +35,12 @@ function buildTemplate(attrs = {}, linesHtml = '', lang = 'html') {
       :host {
         display: block;
         font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
-        --noc-code-bg: #161618;
-        --noc-code-border: #2a2a2d;
-        --noc-code-toolbar-bg: #1c1c1f;
-        --noc-code-text: #b0b8c4;
-        --noc-code-comment: #5a8f5a;
-        --noc-code-line-number: #333;
+        --noc-code-bg: #08080a;
+        --noc-code-border: #23232a;
+        --noc-code-toolbar-bg: #111117;
+        --noc-code-text: #f3f3f7;
+        --noc-code-comment: #7ad27a;
+        --noc-code-line-number: #8c8c96;
         --noc-code-radius: 8px;
         --noc-code-font-size: 0.82rem;
         --noc-code-line-height: 1.65;
@@ -78,25 +78,25 @@ function buildTemplate(attrs = {}, linesHtml = '', lang = 'html') {
         font-size: 0.65rem;
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        color: #444;
+        color: #f4f4fa;
         font-family: inherit;
       }
 
       .copy-btn {
         background: none;
-        border: 1px solid #333;
+        border: 1px solid #4a4a55;
         border-radius: 4px;
-        color: #555;
+        color: #f4f4fa;
         font-size: 0.65rem;
         font-family: inherit;
         letter-spacing: 0.06em;
         padding: 2px 8px;
         cursor: pointer;
-        transition: color 0.15s, border-color 0.15s;
+        transition: color 0.15s, border-color 0.15s, background-color 0.15s;
       }
 
-      .copy-btn:hover        { color: #aaa; border-color: #555; }
-      .copy-btn.copied       { color: #4caf7d; border-color: #4caf7d; }
+      .copy-btn:hover        { color: #ffffff; border-color: #7a7a88; background-color: rgba(255,255,255,0.04); }
+      .copy-btn.copied       { color: #7cf0a0; border-color: #7cf0a0; }
 
       .scroll {
         overflow-x: auto;
@@ -112,12 +112,12 @@ function buildTemplate(attrs = {}, linesHtml = '', lang = 'html') {
         line-height: var(--noc-code-line-height);
       }
 
-      code { color: #ffffff; display: block; }
+      code { color: var(--noc-code-text); display: block; }
 
-      .cm  { color: #5a9e5a; font-style: italic; }
-      .tg  { color: #6ab0f5; }
-      .str { color: #e06c6c; }
-      .pl  { color: #ffffff; }
+      .cm  { color: var(--noc-code-comment); font-style: italic; }
+      .tg  { color: #7ac0ff; }
+      .str { color: #ff8a8a; }
+      .pl  { color: var(--noc-code-text); }
 
       .line {
         display: ${hasLineNumbers ? 'grid' : 'block'};

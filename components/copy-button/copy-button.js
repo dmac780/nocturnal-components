@@ -44,6 +44,7 @@ function buildTemplate(attrs = {}) {
       :host {
         display: inline-block;
         vertical-align: middle;
+        position: relative;
 
         --noc-copy-bg:        #2a2a2a;
         --noc-copy-color:     #eee;
@@ -269,25 +270,50 @@ function buildTemplate(attrs = {}) {
         --noc-copy-border: rgba(34, 197, 94, 0.5) !important;
         --noc-copy-bg:     rgba(34, 197, 94, 0.08) !important;
       }
+
+      .tooltip {
+        position: absolute;
+        z-index: 99999;
+        background: rgba(20, 20, 20, 0.95);
+        color: #eee;
+        padding: 0.4rem 0.8rem;
+        border-radius: 7px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1.4;
+        white-space: nowrap;
+        pointer-events: none;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.15s ease, visibility 0.15s;
+      }
+
+      .tooltip.visible {
+        opacity: 1;
+        visibility: visible;
+      }
     </style>
 
-    <noc-tooltip content="${tooltipText}" trigger="manual">
-      <button type="button" id="btn" part="base" ${disabled || loading ? 'disabled' : ''}>
-        <div class="spinner" id="loader" ${loading ? '' : 'hidden'}></div>
-        <span class="prefix-wrap"><slot name="prefix"></slot></span>
-        <span class="icon-wrap">
-          <slot name="icon">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-          </slot>
-        </span>
-        <span class="label-wrap"><slot></slot></span>
-        <span class="suffix-wrap"><slot name="suffix"></slot></span>
-        <span class="success-mark">&#10003;</span>
-      </button>
-    </noc-tooltip>
+    <button type="button" id="btn" part="base" ${disabled || loading ? 'disabled' : ''}>
+      <div class="spinner" id="loader" ${loading ? '' : 'hidden'}></div>
+      <span class="prefix-wrap"><slot name="prefix"></slot></span>
+      <span class="icon-wrap">
+        <slot name="icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </slot>
+      </span>
+      <span class="label-wrap"><slot></slot></span>
+      <span class="suffix-wrap"><slot name="suffix"></slot></span>
+      <span class="success-mark">&#10003;</span>
+    </button>
+    <div class="tooltip" id="tooltip">${tooltipText}</div>
   `;
 }
 
@@ -313,11 +339,15 @@ class NocCopyButton extends HTMLElement {
       this._isRendered = true;
     }
     this._updateUI();
+    this._bindTooltip();
   }
 
   disconnectedCallback() {
     if (this._btn) {
       this._btn.removeEventListener('click', this._onClickBound);
+      this._btn.removeEventListener('mouseenter', this._onMouseEnter);
+      this._btn.removeEventListener('mouseleave', this._onMouseLeave);
+      this._btn.removeEventListener('mousemove', this._onMouseMove);
     }
   }
 
@@ -375,22 +405,22 @@ class NocCopyButton extends HTMLElement {
 
   _showSuccess() {
     const btn         = this._btn;
-    const tip         = this.shadowRoot.querySelector('noc-tooltip');
+    const tip         = this.shadowRoot.getElementById('tooltip');
     const successText = this.getAttribute('success-text') || 'Copied!';
 
     btn.classList.add('success');
 
     if (tip) {
-      const original = tip.getAttribute('content');
-      tip.setAttribute('content', successText);
-      tip.show();
+      const original = tip.textContent;
+      tip.textContent = successText;
+      tip.classList.add('visible');
       setTimeout(() => {
         btn.classList.remove('success');
-        tip.hide();
+        tip.classList.remove('visible');
         setTimeout(() => {
-          tip.setAttribute('content', original);
+          tip.textContent = original;
           this._copying = false;
-        }, 300);
+        }, 150);
       }, 2000);
     } else {
       setTimeout(() => {
@@ -398,6 +428,58 @@ class NocCopyButton extends HTMLElement {
         this._copying = false;
       }, 2000);
     }
+  }
+
+  _bindTooltip() {
+    const btn = this._btn;
+    const tip = this.shadowRoot.getElementById('tooltip');
+    if (!btn || !tip) return;
+
+    this._onMouseEnter = () => {
+      if (this._copying || this.hasAttribute('disabled')) return;
+      tip.classList.add('visible');
+    };
+
+    this._onMouseLeave = () => {
+      if (this._copying) return;
+      tip.classList.remove('visible');
+    };
+
+    this._onMouseMove = (e) => {
+      // Position relative to the button (position: absolute within host which has position: relative)
+      const btnRect = btn.getBoundingClientRect();
+      const hostRect = this.getBoundingClientRect();
+      
+      // Calculate position relative to the host element
+      const relX = e.clientX - hostRect.left;
+      const relY = e.clientY - hostRect.top;
+      
+      const offset = 12;
+      let x = relX + offset;
+      let y = relY - offset - 35;
+      
+      // Get tooltip dimensions for boundary checks
+      const tipWidth = tip.offsetWidth || 150;
+      const tipHeight = tip.offsetHeight || 30;
+      
+      // Keep within host bounds
+      if (x + tipWidth > hostRect.width) {
+        x = relX - offset - tipWidth;
+      }
+      if (y < -hostRect.top) {
+        y = relY + offset;
+      }
+      if (x < 0) {
+        x = 8;
+      }
+      
+      tip.style.left = `${x}px`;
+      tip.style.top = `${y}px`;
+    };
+
+    btn.addEventListener('mouseenter', this._onMouseEnter);
+    btn.addEventListener('mouseleave', this._onMouseLeave);
+    btn.addEventListener('mousemove', this._onMouseMove);
   }
 
   _onClick(e) {
@@ -420,6 +502,7 @@ class NocCopyButton extends HTMLElement {
     this._loader = this.shadowRoot.getElementById('loader');
 
     this._btn.addEventListener('click', this._onClickBound);
+    this._bindTooltip();
 
     const updateSlotVisibility = () => {
       const prefixSlot  = this.shadowRoot.querySelector('slot[name="prefix"]');
@@ -453,5 +536,6 @@ class NocCopyButton extends HTMLElement {
 customElements.define('noc-copy-button', NocCopyButton);
 
 export function ssrTemplate(attrs) {
-  return `<template shadowrootmode="open">${buildTemplate(attrs)}</template>`;
+  const tooltipText = attrs.tooltip || 'Copy to clipboard';
+  return `<template shadowrootmode="open">${buildTemplate({ ...attrs, tooltip: tooltipText })}</template>`;
 }
