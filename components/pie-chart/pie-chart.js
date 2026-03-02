@@ -61,6 +61,7 @@ function buildTemplate(attrs = {}, slices = [], total = 0, isDonut = false, noBg
     <style>
       :host {
         display: inline-block;
+        position: relative;
         font-family: inherit;
 
         --noc-pie-size:       180px;
@@ -159,7 +160,7 @@ function buildTemplate(attrs = {}, slices = [], total = 0, isDonut = false, noBg
       }
 
       .tooltip {
-        position: fixed;
+        position: absolute;
         background: var(--noc-pie-tooltip-bg);
         color: var(--noc-pie-tooltip-fg);
         font-size: 0.6875rem;
@@ -400,10 +401,11 @@ class NocPieChart extends HTMLElement {
     const dSub    = sr.getElementById('donut-sub');
 
     const posTooltip = (e) => {
-      let x = e.clientX + 14;
-      let y = e.clientY + 14;
-      if (x + 200 > window.innerWidth)  { x = e.clientX - 14 - 200; }
-      if (y + 48  > window.innerHeight) { y = e.clientY - 14 - 48; }
+      const rect = this.getBoundingClientRect();
+      let x = e.clientX - rect.left + 14;
+      let y = e.clientY - rect.top + 14;
+      if (x + 200 > rect.width)  { x = e.clientX - rect.left - 14 - 200; }
+      if (y + 48  > rect.height) { y = e.clientY - rect.top - 14 - 48; }
       tooltip.style.left = `${x}px`;
       tooltip.style.top  = `${y}px`;
     };

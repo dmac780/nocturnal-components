@@ -11,6 +11,8 @@
  * Attributes:
  * @attr {string}  size    - CSS max-width value (default: 350px)
  * @attr {boolean} glass   - Enables glassmorphism variant
+ * @attr {boolean} no-hover - When set, disables hover lift (use when card contains fixed-position overlays e.g. chart tooltips)
+ * @attr {boolean} overflow-visible - When set, card uses overflow:visible so inner overlays (e.g. chart tooltips) are not clipped
  *
  * CSS Custom Properties:
  * @cssprop --noc-card-bg          - Background color (default: #1a1a1a)
@@ -52,7 +54,11 @@ function buildTemplate(attrs = {}) {
         overflow: hidden;
       }
 
-      :host(:hover) .card {
+      :host([overflow-visible]) .card {
+        overflow: visible;
+      }
+
+      :host(:not([no-hover]):hover) .card {
         transform: translateY(-4px);
         box-shadow: 0 20px 40px rgba(0,0,0,.6);
         border-color: #444;
@@ -79,7 +85,7 @@ function buildTemplate(attrs = {}) {
         z-index: 1;
       }
 
-      :host(:hover) .card.glass {
+      :host(:not([no-hover]):hover) .card.glass {
         border-color: rgba(255,255,255,0.22);
         background: rgba(255,255,255,0.07);
       }
