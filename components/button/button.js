@@ -193,7 +193,7 @@ function buildTemplate() {
 class NocButton extends HTMLElement {
 
   static get observedAttributes() {
-    return ['variant', 'size', 'pill', 'circle', 'outline', 'disabled', 'loading', 'caret'];
+    return ['type', 'variant', 'size', 'pill', 'circle', 'outline', 'disabled', 'loading', 'caret'];
   }
 
   constructor() {
@@ -234,6 +234,14 @@ class NocButton extends HTMLElement {
         e.preventDefault();
         e.stopPropagation();
         return;
+      }
+      // type="submit": trigger form submit so the form's submit event fires (works across shadow DOM)
+      if (this.getAttribute('type') === 'submit') {
+        const form = this.closest('form');
+        if (form) {
+          form.requestSubmit();
+          return;
+        }
       }
       this.dispatchEvent(new CustomEvent('noc-click', {
         bubbles:  true,

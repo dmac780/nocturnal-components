@@ -48,12 +48,12 @@ function buildTemplate(attrs = {}) {
       :host {
         display: block;
         font-family: inherit;
-        --noc-select-bg: rgba(26, 26, 26, 0.5);
-        --noc-select-border: rgba(255, 255, 255, 0.1);
-        --noc-select-color: #eee;
+        --noc-select-bg: var(--bg-raised, #1a1a1a);
+        --noc-select-border: var(--border-default, rgba(255, 255, 255, 0.15));
+        --noc-select-color: var(--text-primary, #eee);
         --noc-select-radius: 10px;
-        --noc-select-accent: var(--noc-accent, #2563eb);
-        --noc-select-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        --noc-select-accent: var(--accent, var(--noc-accent, #2563eb));
+        --noc-select-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
       }
 
       .label {
@@ -61,12 +61,12 @@ function buildTemplate(attrs = {}) {
         font-size: 0.875rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
-        color: #fff;
+        color: var(--text-primary, #fff);
       }
 
       .help-text {
         font-size: 0.75rem;
-        color: #888;
+        color: var(--text-tertiary, #888);
         margin-top: 0.5rem;
       }
 
@@ -93,19 +93,20 @@ function buildTemplate(attrs = {}) {
       }
 
       .control:hover:not(.disabled) {
-        border-color: rgba(255, 255, 255, 0.3);
-        background: rgba(255, 255, 255, 0.05);
+        border-color: var(--border-default, rgba(255, 255, 255, 0.25));
+        background: var(--bg-hover, rgba(255, 255, 255, 0.05));
       }
 
       .control.open {
         border-color: var(--noc-select-accent);
-        background: rgba(26, 26, 26, 0.8);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        background: var(--bg-raised, rgba(26, 26, 26, 0.95));
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--noc-select-accent) 25%, transparent);
       }
 
       .control.disabled {
-        opacity: 0.4;
+        opacity: 0.5;
         cursor: not-allowed;
+        background: var(--bg-sunken, #111);
       }
 
       .control.pill { border-radius: 9999px; }
@@ -121,7 +122,7 @@ function buildTemplate(attrs = {}) {
         text-overflow: ellipsis;
       }
 
-      .placeholder { color: #555; }
+      .placeholder { color: var(--text-secondary, #666); }
 
       .chevron {
         width: 20px;
@@ -130,7 +131,7 @@ function buildTemplate(attrs = {}) {
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #666;
+        color: var(--text-tertiary, #666);
       }
 
       .control.open .chevron { transform: rotate(180deg); color: var(--noc-select-accent); }
@@ -139,8 +140,8 @@ function buildTemplate(attrs = {}) {
         width: 20px;
         height: 20px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.1);
-        color: #fff;
+        background: var(--bg-hover, rgba(255, 255, 255, 0.1));
+        color: var(--text-primary, #fff);
         display: none;
         align-items: center;
         justify-content: center;
@@ -149,15 +150,15 @@ function buildTemplate(attrs = {}) {
         transition: all 0.2s;
       }
 
-      .clear:hover { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+      .clear:hover { background: color-mix(in srgb, #ef4444 20%, transparent); color: #ef4444; }
 
       .tag {
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        background: rgba(255, 255, 255, 0.05);
-        color: #eee;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: var(--bg-hover, rgba(255, 255, 255, 0.05));
+        color: var(--text-primary, #eee);
+        border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
         border-radius: 6px;
         padding: 0 0.5rem;
         font-size: 0.75rem;
@@ -165,26 +166,26 @@ function buildTemplate(attrs = {}) {
         transition: all 0.2s;
       }
 
-      .tag:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+      .tag:hover { background: var(--bg-active, rgba(255, 255, 255, 0.08)); border-color: var(--border-default, rgba(255, 255, 255, 0.2)); }
 
-      .tag-remove { 
+      .tag-remove {
         display: flex;
         align-items: center;
-        cursor: pointer; 
-        opacity: 0.5;
+        cursor: pointer;
+        opacity: 0.6;
         transition: opacity 0.2s;
       }
 
-      .tag-remove:hover { opacity: 1; color: #f87171; }
+      .tag-remove:hover { opacity: 1; color: #ef4444; }
       .tag-remove svg { width: 12px; height: 12px; }
 
       .dropdown {
         position: absolute;
         z-index: 1000;
-        background: rgba(26, 26, 26, 0.95);
+        background: var(--bg-raised, #1a1a1a);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--border-default, rgba(255, 255, 255, 0.1));
         border-radius: 12px;
         box-shadow: var(--noc-select-shadow);
         max-height: 15rem;
@@ -219,8 +220,8 @@ function buildTemplate(attrs = {}) {
 
       .dropdown::-webkit-scrollbar { width: 6px; }
       .dropdown::-webkit-scrollbar-track { background: transparent; }
-      .dropdown::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
-      .dropdown::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+      .dropdown::-webkit-scrollbar-thumb { background: var(--border-default, rgba(255, 255, 255, 0.15)); border-radius: 3px; }
+      .dropdown::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary, rgba(255, 255, 255, 0.25)); }
     </style>
 
     <div id="label-container">${label ? `<label class="label" id="select-label">${label}</label>` : ''}</div>
@@ -244,7 +245,7 @@ function buildTemplate(attrs = {}) {
         </span>
       </div>
 
-      <div class="dropdown" id="dropdown" role="listbox">
+      <div class="dropdown" id="dropdown" role="listbox" ${label ? 'aria-labelledby="select-label"' : 'aria-label="Options"'}>
         <slot></slot>
       </div>
     </div>
@@ -305,6 +306,10 @@ class NocSelect extends HTMLElement {
       this._value = newValue || '';
       this._syncSelectedOptions();
     }
+    if (name === 'label' && this._isRendered) {
+      this._updateLabel();
+      return;
+    }
     if (this._isRendered && name !== 'value') {
       this._updateUI();
     }
@@ -364,7 +369,6 @@ class NocSelect extends HTMLElement {
     } else {
       this._selectedOptions = [opt];
       this.value = opt.value;
-      this._isOpen = false;
     }
 
     this._syncSelectedOptions();
@@ -373,6 +377,12 @@ class NocSelect extends HTMLElement {
       composed: true,
       detail: { value: this.value }
     }));
+
+    // Close dropdown after single selection
+    if (!this.hasAttribute('multiple')) {
+      this._isOpen = false;
+      this._updateUI();
+    }
   }
 
   _handleClear(e) {
@@ -474,7 +484,8 @@ class NocSelect extends HTMLElement {
 
     this._updateLabel();
     this._updateHelp();
-    
+    this._updateAccessibleName();
+
     this.shadowRoot.getElementById('trigger').onclick  = this._toggleDropdown;
     this.shadowRoot.getElementById('clear').onclick    = this._handleClear;
     this.shadowRoot.getElementById('dropdown').onclick = this._handleOptionClick;
@@ -487,7 +498,16 @@ class NocSelect extends HTMLElement {
     const label     = this.getAttribute('label');
     const container = this.shadowRoot.getElementById('label-container');
     if (container) {
-      container.innerHTML = label ? `<label class="label">${label}</label>` : '';
+      container.innerHTML = label ? `<label class="label" id="select-label">${label}</label>` : '';
+    }
+  }
+
+  _updateAccessibleName() {
+    const label = this.getAttribute('label');
+    if (label) {
+      this.setAttribute('aria-label', label);
+    } else {
+      this.removeAttribute('aria-label');
     }
   }
 

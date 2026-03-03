@@ -34,7 +34,7 @@ function buildTemplate(attrs = {}) {
         padding: 0.75rem 1rem;
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        color: #aaa;
+        color: var(--text-secondary, #aaa);
         background: transparent;
         position: relative;
         font-size: 0.9375rem;
@@ -43,18 +43,18 @@ function buildTemplate(attrs = {}) {
 
       :host([disabled]) .option {
         cursor: not-allowed;
-        opacity: 0.3;
+        opacity: 0.4;
       }
 
       .option:hover:not(.disabled) {
-        background: rgba(255, 255, 255, 0.05);
-        color: #fff;
+        background: var(--bg-hover, rgba(255, 255, 255, 0.05));
+        color: var(--text-primary, #fff);
         padding-left: 1.25rem;
       }
 
       .option.selected {
-        background: rgba(37, 99, 235, 0.1);
-        color: var(--noc-accent, #3b82f6);
+        background: color-mix(in srgb, var(--accent, var(--noc-accent, #3b82f6)) 12%, transparent);
+        color: var(--text-accent, var(--noc-accent, #3b82f6));
       }
 
       .option.selected::before {
@@ -64,7 +64,7 @@ function buildTemplate(attrs = {}) {
         top: 0;
         bottom: 0;
         width: 3px;
-        background: var(--noc-accent, #3b82f6);
+        background: var(--accent, var(--noc-accent, #3b82f6));
         border-radius: 0 4px 4px 0;
       }
 
@@ -92,7 +92,7 @@ function buildTemplate(attrs = {}) {
       }
 
       .option.active {
-        background: rgba(255, 255, 255, 0.08);
+        background: var(--bg-active, rgba(255, 255, 255, 0.08));
       }
     </style>
 

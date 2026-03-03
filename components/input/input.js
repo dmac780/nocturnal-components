@@ -11,7 +11,7 @@
  * @attr {string} placeholder - The placeholder text.
  * @attr {string} value - The current value of the input.
  * @attr {'sm' | 'md' | 'lg'} size - The size of the input. Defaults to 'md'.
- * @attr {'outline' | 'filled'} variant - The visual variant of the input. Defaults to 'outline'.
+ * @attr {'outline' | 'filled' | 'ghost'} variant - The visual variant of the input. Defaults to 'outline'.
  * @attr {boolean} clearable - If present, shows a clear button when the input has a value.
  * @attr {boolean} toggle - If present and type is 'password', shows a button to toggle password visibility.
  * @attr {boolean} readonly - Whether the input is read-only.
@@ -47,10 +47,11 @@ function buildTemplate(attrs = {}) {
       :host {
         display: block;
         font-family: inherit;
-        --noc-input-bg: #1a1a1a;
-        --noc-input-border: #333;
-        --noc-input-color: #eee;
-        --noc-input-focus: var(--noc-accent, #2563eb);
+        --noc-input-bg: var(--bg-raised, #1a1a1a);
+        --noc-input-border: var(--border-default, #333);
+        --noc-input-color: var(--text-primary, #eee);
+        --noc-input-focus: var(--accent, var(--noc-accent, #2563eb));
+        --noc-input-focus-alpha: color-mix(in srgb, var(--accent, #2563eb) 25%, transparent);
         --noc-input-radius: 8px;
         --noc-input-padding: 0.625rem 0.75rem;
         width: 100%;
@@ -65,7 +66,7 @@ function buildTemplate(attrs = {}) {
       .label {
         font-size: 0.875rem;
         font-weight: 600;
-        color: #fff;
+        color: var(--text-primary, #fff);
         margin-bottom: 0.125rem;
       }
 
@@ -81,19 +82,28 @@ function buildTemplate(attrs = {}) {
       }
 
       :host([variant="filled"]) .input-wrapper {
-        background: #0a0a0a;
-        border-color: #222;
+        background: var(--bg-sunken, #0a0a0a);
+        border-color: var(--border-subtle, #222);
+      }
+
+      :host([variant="ghost"]) .input-wrapper {
+        background: transparent;
+        border-color: var(--border-subtle, rgba(255, 255, 255, 0.1));
+      }
+
+      :host([variant="ghost"]) .input-wrapper:hover:not(.disabled) {
+        border-color: var(--border-default, rgba(255, 255, 255, 0.2));
       }
 
       .input-wrapper:focus-within:not(.disabled) {
         border-color: var(--noc-input-focus);
-        box-shadow: 0 0 0 3px var(--noc-input-focus-alpha, rgba(37, 99, 235, 0.2));
+        box-shadow: 0 0 0 3px var(--noc-input-focus-alpha);
       }
 
       .input-wrapper.disabled {
         opacity: 0.5;
         cursor: not-allowed;
-        background: #111;
+        background: var(--bg-sunken, #111);
       }
 
       input {
@@ -108,7 +118,7 @@ function buildTemplate(attrs = {}) {
         min-width: 0;
       }
 
-      input::placeholder { color: #555; }
+      input::placeholder { color: var(--text-secondary, #666); }
 
       /* Sizes */
       :host([size="sm"]) { --noc-input-padding: 0.4rem 0.6rem; --noc-input-radius: 6px; }
@@ -118,7 +128,7 @@ function buildTemplate(attrs = {}) {
 
       .helper {
         font-size: 0.75rem;
-        color: #888;
+        color: var(--text-tertiary, #888);
         margin-top: 0.125rem;
       }
 
@@ -138,22 +148,22 @@ function buildTemplate(attrs = {}) {
         align-items: center;
         justify-content: center;
         border-radius: 6px;
-        color: #666;
+        color: var(--text-tertiary, #666);
         transition: all 0.2s;
         font-size: 1rem;
       }
 
       .action-button:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: #eee;
+        background: var(--bg-hover, rgba(255, 255, 255, 0.05));
+        color: var(--text-primary, #eee);
       }
 
       ::slotted([slot="prefix"]), ::slotted([slot="suffix"]) {
         display: flex;
         align-items: center;
         padding: 0 0.75rem;
-        color: #666;
-        background: rgba(255, 255, 255, 0.02);
+        color: var(--text-tertiary, #666);
+        background: var(--bg-hover, rgba(255, 255, 255, 0.02));
         height: 100%;
         border-right: 1px solid var(--noc-input-border);
       }
@@ -306,6 +316,13 @@ class NocInput extends HTMLElement {
     this.inputEl   = this.shadowRoot.querySelector('input');
     this.clearBtn  = this.shadowRoot.getElementById('clearBtn');
     this.toggleBtn = this.shadowRoot.getElementById('toggleBtn');
+
+    const labelAttr = this.getAttribute('label');
+    if (labelAttr) {
+      this.setAttribute('aria-label', labelAttr);
+    } else {
+      this.removeAttribute('aria-label');
+    }
 
     this.inputEl.addEventListener('input', e => {
       this.setAttribute('value', this.inputEl.value);

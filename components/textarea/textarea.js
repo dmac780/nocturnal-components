@@ -12,6 +12,7 @@
  * @attr {string} placeholder - The placeholder of the textarea.
  * @attr {boolean} disabled - Whether the textarea is disabled.
  * @attr {'sm' | 'md' | 'lg'} size - The size of the textarea. Defaults to 'md'.
+ * @attr {'outline' | 'filled' | 'ghost'} variant - Visual variant. Defaults to 'outline'.
  * @attr {'none' | 'vertical' | 'horizontal' | 'both' | 'auto'} resize - The resize mode of the textarea. Defaults to 'none'.
  * @attr {string} value - The value of the textarea.
  * 
@@ -42,12 +43,14 @@ function buildTemplate(attrs = {}) {
       :host {
         display: block;
         font-family: inherit;
-        --noc-textarea-bg: #1e1e1e;
-        --noc-textarea-color: #fff;
-        --noc-textarea-border: #333;
-        --noc-textarea-border-focus: var(--noc-accent, #3b82f6);
-        --noc-textarea-label: #aaa;
-        --noc-textarea-help: #888;
+        width: 100%;
+        --noc-textarea-bg: var(--bg-raised, #1a1a1a);
+        --noc-textarea-border: var(--border-default, #333);
+        --noc-textarea-color: var(--text-primary, #eee);
+        --noc-textarea-border-focus: var(--accent, var(--noc-accent, #3b82f6));
+        --noc-textarea-focus-alpha: color-mix(in srgb, var(--accent, #3b82f6) 25%, transparent);
+        --noc-textarea-label: var(--text-primary, #fff);
+        --noc-textarea-help: var(--text-tertiary, #888);
       }
 
       .field {
@@ -57,8 +60,8 @@ function buildTemplate(attrs = {}) {
       }
 
       label {
-        font-size: 0.8125rem;
-        font-weight: 500;
+        font-size: 0.875rem;
+        font-weight: 600;
         color: var(--noc-textarea-label);
         user-select: none;
       }
@@ -69,7 +72,7 @@ function buildTemplate(attrs = {}) {
         font-family: inherit;
         line-height: 1.5;
         padding: 0.625rem 0.75rem;
-        border-radius: 6px;
+        border-radius: 8px;
         border: 1px solid var(--noc-textarea-border);
         background: var(--noc-textarea-bg);
         color: var(--noc-textarea-color);
@@ -77,19 +80,37 @@ function buildTemplate(attrs = {}) {
         font-size: 0.875rem;
       }
 
-      :host([size="sm"]) textarea { padding: 0.4rem 0.6rem; font-size: 0.75rem; }
-      :host([size="lg"]) textarea { padding: 0.8rem 1rem; font-size: 1rem; }
+      :host([variant="filled"]) textarea {
+        background: var(--bg-sunken, #0a0a0a);
+        border-color: var(--border-subtle, #222);
+      }
+
+      :host([variant="ghost"]) textarea {
+        background: transparent;
+        border-color: var(--border-subtle, rgba(255, 255, 255, 0.1));
+      }
+
+      :host([variant="ghost"]) textarea:hover:not(:disabled) {
+        border-color: var(--border-default, rgba(255, 255, 255, 0.2));
+      }
+
+      :host([size="sm"]) textarea { padding: 0.4rem 0.6rem; font-size: 0.8125rem; border-radius: 6px; }
+      :host([size="lg"]) textarea { padding: 0.8rem 1rem; font-size: 1rem; border-radius: 10px; }
+
+      textarea::placeholder {
+        color: var(--text-secondary, #666);
+      }
 
       textarea:focus {
         outline: none;
         border-color: var(--noc-textarea-border-focus);
-        box-shadow: 0 0 0 3px var(--noc-accent-alpha, rgba(59, 130, 246, 0.2));
+        box-shadow: 0 0 0 3px var(--noc-textarea-focus-alpha);
       }
 
       textarea:disabled {
         opacity: 0.5;
         cursor: not-allowed;
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--bg-sunken, rgba(255, 255, 255, 0.05));
       }
 
       .help {
@@ -120,7 +141,7 @@ function buildTemplate(attrs = {}) {
 
 class NocTextarea extends HTMLElement {
   static get observedAttributes() {
-    return ['label', 'help-text', 'rows', 'placeholder', 'disabled', 'size', 'resize', 'value'];
+    return ['label', 'help-text', 'rows', 'placeholder', 'disabled', 'size', 'variant', 'resize', 'value'];
   }
 
   constructor() {
@@ -165,6 +186,7 @@ class NocTextarea extends HTMLElement {
       'help-text': this.getAttribute('help-text'),
       rows:        this.getAttribute('rows'),
       placeholder: this.getAttribute('placeholder'),
+      variant:     this.getAttribute('variant'),
       resize:      this.getAttribute('resize'),
       value:       this.getAttribute('value'),
       ...(this.hasAttribute('disabled') ? { disabled: true } : {}),
@@ -190,6 +212,13 @@ class NocTextarea extends HTMLElement {
         detail: { value: this._textarea.value }
       }));
     });
+
+    const labelAttr = this.getAttribute('label');
+    if (labelAttr) {
+      this.setAttribute('aria-label', labelAttr);
+    } else {
+      this.removeAttribute('aria-label');
+    }
   }
 
   _updateUI() {
@@ -218,6 +247,13 @@ class NocTextarea extends HTMLElement {
 
     if (this._textarea.value !== value) {
       this._textarea.value = value;
+    }
+
+    const labelAttr = this.getAttribute('label');
+    if (labelAttr) {
+      this.setAttribute('aria-label', labelAttr);
+    } else {
+      this.removeAttribute('aria-label');
     }
   }
 
